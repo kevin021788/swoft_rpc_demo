@@ -1,0 +1,97 @@
+version: '3'
+
+services:
+
+    swoft-rpc:
+       image: swoft/swoft:latest
+       container_name: swoft-rpc
+#       build: ./
+       ports:
+         - "80:80"
+         - "8099:8099"
+       volumes:
+         - ./:/var/www/swoft
+       stdin_open: true
+       tty: true
+       privileged: true
+       links:
+         - mysql-db:mysql-db
+         - redis-db:redis-db
+       restart: always
+       entrypoint: ["php", "/var/www/swoft/bin/swoft", "start"]
+
+
+    samba:
+       image: dperson/samba
+       container_name: smba
+       volumes:
+        - /home/:/mount
+       ports:
+        - "139:139"
+        - "445:445"
+       command: '-u "root;kevin" -s "kevinhome;/mount/;yes;no;yes;all;all;all" -w "WORKGROUP" -g "force user=root" -g "guest account=root"'
+       restart: always
+
+
+
+#    php-fpm:
+#       build: /home/kevin/docker/files/php/
+#       container_name: php-fpm
+#       ports:
+#        - "9000:9000"
+#       links:
+#        - mysql-db:mysql-db
+#        - redis-db:redis-db
+#       volumes:
+#        - /home/kevin/docker/app:/data/www:rw
+#        - /home/kevin/docker/files/php/php.ini:/usr/local/etc/php/php.ini:ro # 当前php配置文件；可以拷贝修改php-dev.ini为想要的配置
+#        - /home/kevin/docker/files/php/php-fpm.conf:/usr/local/etc/php-fpm.conf:ro
+#        - /home/kevin/docker/logs/php-fpm:/var/log/php-fpm:rw
+#        restart: always
+#       command: php-fpm
+
+#    nginx:
+#       build: /home/kevin/docker/files/nginx
+#       container_name: nginx
+#       depends_on:
+#        - php-fpm
+#       links:
+#        - php-fpm:php-fpm
+#       volumes:
+#        - /home/kevin/docker/app:/data/www:rw
+#        - /home/kevin/docker/files/nginx/conf.d:/etc/nginx/conf.d:ro
+#        - /home/kevin/docker/files/nginx/certs/:/etc/nginx/certs
+#        - /home/kevin/docker/files/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+#        - /home/kevin/docker/logs/nginx:/var/log/nginx
+#       ports:
+#        - "80:80"
+#        - "8080:8080"
+#        - "443:443"
+#       restart: always
+#       command: nginx -g 'daemon off;'
+
+    mysql-db:
+       build: /home/kevin/docker/files/mysql
+       container_name: mysql-db
+       ports:
+        - "3306:3306"
+       volumes:
+        - /home/kevin/docker/data/mysql:/var/lib/mysql:rw
+        - /home/kevin/docker/logs/mysql:/var/lib/mysql-logs:rw
+        - /home/kevin/docker/files/mysql/conf.d:/etc/mysql/conf.d:ro
+       environment:
+        MYSQL_ROOT_PASSWORD: 123456
+        MYSQL_DATABASE: test
+        MYSQL_USER: test
+        MYSQL_PASSWORD: test123
+       restart: always
+       command: "--character-set-server=utf8"
+
+    redis-db:
+       build: /home/kevin/docker/files/redis
+       container_name: redis-db
+       ports:
+        - "6379:6379"
+       volumes:
+        - /home/kevin/docker/data/redis:/data
+       restart: always
