@@ -13,4 +13,12 @@ interface TestInterface
 {
     public function getStr(string $str);
 
+    public function addProd(array $info);
+
+    public function findProd(int $id,array $cond);
+
+    public function delProd(int $id);
+
+    public function modifyProd(int $id,array $info);
+
 }

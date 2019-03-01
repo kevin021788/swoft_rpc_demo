@@ -12,6 +12,7 @@ namespace App\Models\Logic;
 
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Rpc\Client\Bean\Annotation\Reference;
+use App\Models\Entity\User;
 
 /**
  * 用户逻辑层
@@ -26,38 +27,77 @@ use Swoft\Rpc\Client\Bean\Annotation\Reference;
  */
 class UserLogic
 {
-    /**
-     * @Reference("user")
-     *
-     * @var \App\Lib\DemoInterface
-     */
-    private $demoService;
+
 
     /**
-     * @Reference(name="user", version="1.0.1")
+     * SQL
+     * create table user (
+     * id int primary key auto_increment COMMENT "ID",
+     * account varchar(20)  COMMENT "帐号",
+     * password varchar(20) COMMENT "密码",
+     * username varchar(20) COMMENT "昵称",
+     * reg_time datetime not null COMMENT "注册时间"
+     * ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT "用户表";
      *
-     * @var \App\Lib\DemoInterface
+     * 生成实体命令
+     * php bin/swoft entity:create -d user
      */
-    private $demoServiceV2;
 
-    public function rpcCall()
+
+    /**
+     * 加盐
+     * @var string
+     */
+    private $passwordSolt = "____kevin";
+
+    /**
+     * 生成加密字符串
+     * @param $password
+     * @return string
+     */
+    protected function genPassword($password)
     {
-        return ['bean', $this->demoService->getUser('12'), $this->demoServiceV2->getUser('16')];
+        return md5($password . $this->passwordSolt);
     }
 
-    public function getUserInfo(array $uids)
+    /**
+     * 注册用户
+     * @param array $info
+     * @return mixed
+     */
+    public function register(array $info)
     {
-        $user = [
-            'name' => 'boby',
-            'desc' => 'this is boby'
+        $user = new User();
+        $info['password'] = $this->genPassword($info['password']);
+        $info['regTime'] = date('Y-m-d H:i:s');
+        return $user->fill($info)->save()->getResult();
+    }
+
+    /**
+     * 用户登录
+     * @param string $account
+     * @param string $password
+     * @return mixed
+     */
+    public function login(string $account, string $password)
+    {
+        $cond = [
+            'account' => $account,
+            'password' => $this->genPassword($password),
         ];
-
-        $data = [];
-        foreach ($uids as $uid) {
-            $user['uid'] = $uid;
-            $data[] = $user;
-        }
-
-        return $data;
+        return User::findOne($cond)->getResult();
     }
+
+    /**
+     * 用户信息
+     * @param int $id
+     * @param array $cond
+     * @return mixed
+     */
+    public function info(int $id, array $cond)
+    {
+        $cond['id'] = $id;
+        return User::findOne($cond)->getResult();
+    }
+
 }

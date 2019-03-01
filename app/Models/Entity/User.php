@@ -1,87 +1,118 @@
 <?php
-/**
- * This file is part of Swoft.
- *
- * @link https://swoft.org
- * @document https://doc.swoft.org
- * @contact group@swoft.org
- * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
- */
-
 namespace App\Models\Entity;
 
+use Swoft\Db\Model;
+use Swoft\Db\Bean\Annotation\Column;
+use Swoft\Db\Bean\Annotation\Entity;
 use Swoft\Db\Bean\Annotation\Id;
 use Swoft\Db\Bean\Annotation\Required;
 use Swoft\Db\Bean\Annotation\Table;
-use Swoft\Db\Bean\Annotation\Column;
-use Swoft\Db\Bean\Annotation\Entity;
-use Swoft\Db\Model;
 use Swoft\Db\Types;
 
 /**
- * 用户实体
- *
+ * 用户表
+
  * @Entity()
  * @Table(name="user")
  * @uses      User
- * @version   2017年08月23日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 class User extends Model
 {
     /**
-     * 主键ID
-     *
+     * @var int $id ID
      * @Id()
-     * @Column(name="id", type=Types::INT)
-     * @var null|int
+     * @Column(name="id", type="integer")
      */
     private $id;
 
     /**
-     * 名称
-     *
-     * @Column(name="name", type=Types::STRING, length=20)
+     * @var string $account 帐号
+     * @Column(name="account", type="string", length=20)
+     */
+    private $account;
+
+    /**
+     * @var string $password 密码
+     * @Column(name="password", type="string", length=20)
+     */
+    private $password;
+
+    /**
+     * @var string $username 昵称
+     * @Column(name="username", type="string", length=20)
+     */
+    private $username;
+
+    /**
+     * @var string $regTime 注册时间
+     * @Column(name="reg_time", type="datetime")
      * @Required()
-     * @var null|string
      */
-    private $name;
+    private $regTime;
 
     /**
-     * 年龄
-     *
-     * @Column(name="age", type=Types::INT)
-     * @var int
+     * ID
+     * @param int $value
+     * @return $this
      */
-    private $age = 0;
+    public function setId(int $value)
+    {
+        $this->id = $value;
+
+        return $this;
+    }
 
     /**
-     * 性别
-     *
-     * @Column(name="sex", type="int")
-     * @var int
+     * 帐号
+     * @param string $value
+     * @return $this
      */
-    private $sex = 0;
+    public function setAccount(string $value): self
+    {
+        $this->account = $value;
+
+        return $this;
+    }
 
     /**
-     * 描述
-     *
-     * @Column(name="description", type="string")
-     * @var string
+     * 密码
+     * @param string $value
+     * @return $this
      */
-    private $desc = '';
+    public function setPassword(string $value): self
+    {
+        $this->password = $value;
+
+        return $this;
+    }
 
     /**
-     * 非数据库字段，未定义映射关系
-     *
-     * @var mixed
+     * 昵称
+     * @param string $value
+     * @return $this
      */
-    private $otherProperty;
+    public function setUsername(string $value): self
+    {
+        $this->username = $value;
+
+        return $this;
+    }
 
     /**
-     * @return int|null
+     * 注册时间
+     * @param string $value
+     * @return $this
+     */
+    public function setRegTime(string $value): self
+    {
+        $this->regTime = $value;
+
+        return $this;
+    }
+
+    /**
+     * ID
+     * @return mixed
      */
     public function getId()
     {
@@ -89,90 +120,39 @@ class User extends Model
     }
 
     /**
-     * @param int|null $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param null|string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * @return int
-     */
-    public function getAge(): int
-    {
-        return $this->age;
-    }
-
-    /**
-     * @param int $age
-     */
-    public function setAge(int $age)
-    {
-        $this->age = $age;
-    }
-
-    /**
-     * @return int
-     */
-    public function getSex(): int
-    {
-        return $this->sex;
-    }
-
-    /**
-     * @param int $sex
-     */
-    public function setSex(int $sex)
-    {
-        $this->sex = $sex;
-    }
-
-    /**
+     * 帐号
      * @return string
      */
-    public function getDesc(): string
+    public function getAccount()
     {
-        return $this->desc;
+        return $this->account;
     }
 
     /**
-     * @param string $desc
+     * 密码
+     * @return string
      */
-    public function setDesc(string $desc)
+    public function getPassword()
     {
-        $this->desc = $desc;
+        return $this->password;
     }
 
     /**
-     * @return mixed
+     * 昵称
+     * @return string
      */
-    public function getOtherProperty()
+    public function getUsername()
     {
-        return $this->otherProperty;
+        return $this->username;
     }
 
     /**
-     * @param mixed $otherProperty
+     * 注册时间
+     * @return string
      */
-    public function setOtherProperty($otherProperty)
+    public function getRegTime()
     {
-        $this->otherProperty = $otherProperty;
+        return $this->regTime;
     }
+
 }
