@@ -11,6 +11,7 @@
 namespace App\Models\Logic;
 
 use Swoft\Bean\Annotation\Bean;
+use Swoft\Log\Log;
 use Swoft\Rpc\Client\Bean\Annotation\Reference;
 use App\Models\Entity\User;
 
@@ -70,7 +71,7 @@ class UserLogic
         $user = new User();
         $info['password'] = $this->genPassword($info['password']);
         $info['regTime'] = date('Y-m-d H:i:s');
-        return $user->fill($info)->save()->getResult();
+        return (null === ($rs = $user->fill($info)->save()->getResult())) ? false : $rs;
     }
 
     /**
@@ -85,7 +86,7 @@ class UserLogic
             'account' => $account,
             'password' => $this->genPassword($password),
         ];
-        return User::findOne($cond)->getResult();
+        return (null === ($rs = User::findOne($cond)->getResult())) ? false : $rs;
     }
 
     /**
@@ -97,7 +98,7 @@ class UserLogic
     public function info(int $id, array $cond)
     {
         $cond['id'] = $id;
-        return User::findOne($cond)->getResult();
+        return (null === ($rs = User::findOne($cond)->getResult())) ? false : $rs;
     }
 
 }
